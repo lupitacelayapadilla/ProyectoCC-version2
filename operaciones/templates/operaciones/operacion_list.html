@@ -1,0 +1,82 @@
+{% extends 'base2.html' %}
+{% load static %}
+
+{% block titulo %}
+     Operaciones
+{% endblock titulo %}
+
+{% block contenido %}
+<h1 class="app-page-title">{{etiqueta}} de Operaciones</h1>
+
+<div class="app-card app-card-orders-lable shadow-sm mb-s" id="tabla-operaciones">
+      {% if not perms.usuarios.cajero_permiso %}
+      <a class="btn btn-outline-primary" href="{% url 'operaciones:nuevo' %}">Operación</a>
+
+    {% else %}
+      <table class="table  table-borderless">
+          <thead class="table-info">
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+          </thead>
+          <tbody>
+              
+            
+
+
+                {% for oper in operaciones %}
+                <tr>
+                      <td>{{oper.nombre}}</td>
+                      <td>{{oper.precio_unitario}}</td>
+                      <td>{{oper.cantidad}}</td>
+                      <td>{{oper.fecha}}</td>
+                      <td>
+                        <div lass="btn-group" role="group" aria-label="Basic outlined example">
+                          <a class="btn btn-outline-primary" href="{% url 'operaciones:ver' oper.pk%}">Ver</a>
+                          
+                          <button 
+                            onclick="muestraModal('{% url 'operaciones:eliminar' oper.pk %}','{{oper.nombre}}', 'registro')" 
+                            type="button" class="btn btn-outline-primary" 
+                            data-toggle="modal" data-target="#exampleModal">
+                            Eliminar 
+                        </button>
+                          
+                        </div>
+                      </td>
+                      
+                      
+                </tr>
+                {% endfor %}
+              
+          </tbody>
+      </table>
+      {% endif %}
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Confirmación</h5>
+          <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body" id="modalCuerpo" >         
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            <form id="formEliminar" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Eliminar</button>
+            </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  
+  
+{% endblock contenido %}
